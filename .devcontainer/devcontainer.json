@@ -3,7 +3,8 @@
   "name": "Mini Thermostat Card Development",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "runArgs": [
-    "--network=host"
+    "--network=host",
+    "--env-file=${localWorkspaceFolder}/.env"
   ],
   "forwardPorts": [5000, 9123],
   "portsAttributes": {
