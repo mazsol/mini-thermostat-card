@@ -24,6 +24,8 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@eslint/json": "^0.14.0",
+    "@release-it/bumper": "^7.0.5",
+    "@release-it/conventional-changelog": "^10.0.1",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -32,6 +34,8 @@
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
+    "prettier": "^3.6.2",
+    "release-it": "^19.0.6",
     "rimraf": "^6.1.0",
     "rollup": "^4.53.2",
     "rollup-plugin-serve": "^3.0.0",
@@ -54,7 +58,7 @@
       "release": true,
       "releaseName": "v${version}",
       "assets": [
-        "dist/multi-thermostat-card.js"
+        "dist/mini-thermostat-card.js"
       ]
     },
     "npm": {
@@ -91,6 +95,8 @@
     "build": "npm run clean && npm run lint && npm run rollup",
     "clean": "rimraf dist",
     "lint": "eslint src/*.ts",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
     "rollup": "rollup -c",
     "prepare": "husky",
     "release": "release-it"
