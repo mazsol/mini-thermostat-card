@@ -1,4 +1,8 @@
 {
+    "peacock.remoteColor": "#1857a4",
+    "files.associations": {
+        "*.yaml": "home-assistant"
+    },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#1f6fd0",
         "activityBar.background": "#1f6fd0",
@@ -17,6 +21,5 @@
         "titleBar.activeForeground": "#e7e7e7",
         "titleBar.inactiveBackground": "#1857a499",
         "titleBar.inactiveForeground": "#e7e7e799"
-    },
-    "peacock.remoteColor": "#1857a4"
+    }
 }

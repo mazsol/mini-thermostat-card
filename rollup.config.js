@@ -11,6 +11,8 @@ const serveopts = {
   contentBase: ['./dist'],
   host: '0.0.0.0',
   port: 5000,
+  open: false,
+  verbose: true,
   allowCrossOrigin: true,
   headers: {
     'Access-Control-Allow-Origin': '*',
@@ -36,7 +38,7 @@ export default [
       dir: 'dist',
       format: 'es',
     },
-    external: ['lit', 'lit/decorators.js', 'custom-card-helpers'],
+    external: [],
     plugins: [...plugins],
   },
 ];

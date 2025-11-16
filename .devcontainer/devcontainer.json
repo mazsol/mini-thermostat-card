@@ -2,12 +2,16 @@
 {
   "name": "Mini Thermostat Card Development",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "runArgs": [
+    "--network=host"
+  ],
   "forwardPorts": [5000, 9123],
   "portsAttributes": {
     "5000": {
       "label": "Development Server",
       "onAutoForward": "notify",
-      "visibility": "public"
+      "visibility": "public",
+      "protocol": "http"
     },
     "9123": {
       "label": "Home Assistant"

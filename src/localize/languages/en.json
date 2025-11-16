@@ -1,0 +1,9 @@
+{
+  "common": {
+    "version": "Version",
+    "invalid_configuration": "Invalid configuration",
+    "invalid_config_entity": "Specify an entity from within the climate domain",
+    "show_warning": "Show Warning",
+    "show_error": "Show Error"
+  }
+}
