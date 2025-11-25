@@ -32,10 +32,11 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 | show_related_entities   | boolean | **Optional** | Show related entities from same device           | `false`             |
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/mazsol/mini-thermostat-card.svg?style=for-the-badge
-[commits]: https://github.com/mazsol/mini-thermostat-card/commits/master
+[commits]: https://github.com/mazsol/mini-thermostat-card/commits/main
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/c/projects/frontend
 [license-shield]: https://img.shields.io/github/license/mazsol/mini-thermostat-card.svg?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/mazsol/mini-thermostat-card.svg?style=for-the-badge
 [releases]: https://github.com/mazsol/mini-thermostat-card/releases
+
