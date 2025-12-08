@@ -10,7 +10,7 @@ const dev = process.env.ROLLUP_WATCH;
 const serveopts = {
   contentBase: ['./dist'],
   host: '0.0.0.0',
-  port: 5000,
+  port: 5001,
   open: false,
   verbose: true,
   allowCrossOrigin: true,
@@ -25,7 +25,6 @@ const plugins = [
   }),
   commonjs(),
   typescript(),
-
   json(),
   dev && serve(serveopts),
   !dev && terser(),
@@ -33,10 +32,11 @@ const plugins = [
 
 export default [
   {
-    input: 'src/mini-thermostat-card.ts',
+    input: dev ? 'src/mini-thermostat-card-test.ts' : 'src/mini-thermostat-card.ts',
     output: {
       dir: 'dist',
       format: 'es',
+      entryFileNames: dev ? 'mini-thermostat-card-test.js' : 'mini-thermostat-card.js',
     },
     external: [],
     plugins: [...plugins],
