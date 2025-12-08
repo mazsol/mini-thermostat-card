@@ -118,10 +118,10 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   }
   .temp-control.row {
     flex-direction: row-reverse;
+    width: 45%;
   }
-  .temp-control.row > .first {
-  }
-  .temp-control.row > .last {
+  .temp-control.col {
+    width: 25%;
   }
   div.current-value {
     display: flex;
@@ -132,44 +132,95 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     display: flex;
     align-items: center;
     margin: 0;
-    line-height: var(--st-font-size-l, var(--paper-font-display1_-_font-size));
-    font-size: var(--st-font-size-l, var(--paper-font-display1_-_font-size));
+    line-height: 30px;
+    font-size: 30px;
     font-weight: 400;
   }
   h3.current-value.updating {
     color: var(--error-color);
   }
   span.temp-unit {
-    font-size: var(--st-font-size-m, var(--paper-font-title_-_font-size));
-    line-height: var(--st-font-size-m, var(--paper-font-title_-_font-size));
-  }
-  .current-unit {
-    font-size: var(--st-font-size-m, var(--paper-font-title_-_font-size));
-  }
-
-  /* Small screen sizes */
-  @media (min-width: 480px) {
-  }
-
-  /* Medium screen sizes */
-  @media (min-width: 768px) {
-    h3.current-value {
-      font-size: 30px;
-      font-weight: var(--ha_font_weight-medium, 500);
-      line-height: var(--st-font-size-xl, var(--paper-font-display2_-_font-size));
-    }
-    span.temp-unit {
-      font-size: 20px;
-      line-height: var(--ha-font-size-m);
-      margin-top: 12px;
-    }
-  }
-
-  /* Large screen sizes */
-  @media (min-width: 992px) {
+    font-size: 18px;
+    line-height: 18px;
   }
 
   /* Extra large screen sizes */
-  @media (min-width: 1200px) {
+  @media (max-width: 1200px) {
+  }
+
+  /* Large screen sizes */
+  @media (max-width: 1024px) {
+    h3.current-value {
+      font-size: 24px;
+      font-weight: var(--ha_font_weight-medium, 500);
+      line-height: 24px;
+    }
+    span.temp-unit {
+      font-size: 16px;
+      line-height: 16px;
+    }
+    .temp-control.row {
+      width: 67%;
+    }
+    .temp-control.col {
+      width: 35%;
+    }
+  }
+
+  /* Medium screen sizes */
+  @media (max-width: 768px) {
+    h3.current-value {
+      font-size: 24px;
+      font-weight: var(--ha_font_weight-medium, 500);
+      line-height: 24px;
+    }
+    span.temp-unit {
+      font-size: 16px;
+      line-height: 16px;
+    }
+    .temp-control.row {
+      width: 50%;
+    }
+    .temp-control.col {
+      width: 30%;
+    }
+  }
+
+  /* Small screen sizes */
+  @media (max-width: 480px) {
+    h3.current-value {
+      font-size: 30px;
+      font-weight: var(--ha_font_weight-medium, 500);
+      line-height: 30px;
+    }
+    span.temp-unit {
+      font-size: 20px;
+      line-height: 20px;
+    }
+    .temp-control.row {
+      width: 70%;
+    }
+    .temp-control.col {
+      width: 40%;
+    }
+  }
+
+  /* Extra Small screen sizes */
+  @media (max-width: 360px) {
+    h3.current-value {
+      font-size: 30px;
+      font-weight: var(--ha_font_weight-medium, 500);
+      line-height: 30px;
+    }
+    span.temp-unit {
+      font-size: 20px;
+      line-height: 20px;
+    }
+    .temp-control.row {
+      width: 75%;
+    }
+    .temp-control.col {
+      width: 45%;
+    }
   }
 `;
