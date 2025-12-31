@@ -1,40 +1,238 @@
-# Mini Thermostat Card by [@mazsol](https://www.github.com/mazsol)
-
-The mini thermostat card for Home Assistant Lovelace
+# Mini Thermostat Card
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE.md)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
-
 ![Project Maintenance][maintenance-shield]
 [![GitHub Activity][commits-shield]][commits]
 
-[![Community Forum][forum-shield]][forum]
+A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. Control your climate devices with a clean, modern interface.
+
+## Features
+
+- 🎨 **Clean Design** - Minimalist interface that fits any Home Assistant theme
+- 📱 **Responsive Layout** - Optimized for mobile, tablet, and desktop
+- 🔧 **Customizable** - Multiple configuration options to match your needs
+- 🌡️ **Temperature Control** - Precise temperature adjustment with custom step size
+- 🔄 **HVAC Modes** - Quick access to all climate modes with visual icons
+- 🔗 **Related Entities** - Display and control related devices (switches, fans, etc.)
+- 🌍 **Localization** - Supports Home Assistant's multi-language system
+- ⚡ **Debounced Updates** - Smart temperature updates to reduce API calls
+
+## Screenshots
+
+<!-- TODO: Add screenshots -->
+### Desktop View
+![Desktop View](./assets/mini-thermostat-screenshot-desktop.png)
+
+### Mobile View
+![Mobile View](./assets/mini-thermostat-screenshot-mobile.png)
+
+### Different Layouts
+| Row Layout | Column Layout |
+|------------|---------------|
+| ![Row](./assets/mini-thermostat-screenshot-row.png) | ![Column](./assets/mini-thermostat-screenshot-col.png) |
+
+## Installation
+
+### HACS (Recommended)
+
+1. Make sure [HACS](https://hacs.xyz/) is installed
+2. Open HACS in your Home Assistant instance
+3. Go to "Frontend" section
+4. Click the three dots menu in the top right corner
+5. Select "Custom repositories"
+6. Add this repository URL: `https://github.com/mazsol/mini-thermostat-card`
+7. Select category: "Lovelace"
+8. Click "Add"
+9. Find "Mini Thermostat Card" in the list
+10. Click "Download"
+11. Restart Home Assistant
+
+### Manual Installation
+
+1. Download `mini-thermostat-card.js` from the [latest release](https://github.com/mazsol/mini-thermostat-card/releases)
+2. Copy it to `config/www/mini-thermostat-card/mini-thermostat-card.js`
+3. Add the resource in your Lovelace configuration:
+
+#### UI Mode
+- Go to Settings → Dashboards → Resources
+- Click "Add Resource"
+- URL: `/local/mini-thermostat-card/mini-thermostat-card.js`
+- Resource type: `JavaScript Module`
+
+#### YAML Mode
+```yaml
+resources:
+  - url: /local/mini-thermostat-card/mini-thermostat-card.js
+    type: module
+```
+
+## Configuration
+
+### Minimal Configuration
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+```
+
+### Full Configuration Example
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+name: Living Room Thermostat
+layout: row
+temp_unit: °C
+step_size: 0.5
+show_name: true
+show_sensor_labels: true
+show_related_entities: true
+```
+
+### Configuration Options
+
+| Name                    | Type           | Required | Description                                      | Default             |
+| ----------------------- | -------------- | -------- | ------------------------------------------------ | ------------------- |
+| `type`                  | string         | **Yes**  | Must be `custom:mini-thermostat-card`            | -                   |
+| `entity`                | string         | **Yes**  | Climate entity ID                                | -                   |
+| `name`                  | string         | No       | Card name (overrides entity friendly name)       | Entity friendly name|
+| `layout`                | string         | No       | Layout orientation: `row` or `col`               | `row`               |
+| `temp_unit`             | boolean/string | No       | Temperature unit to display. Use `false` to hide, or custom string (e.g., `°C`, `°F`) | Home Assistant's unit |
+| `step_size`             | number         | No       | Temperature adjustment step size                 | `1`                 |
+| `show_name`             | boolean        | No       | Display card name                                | `true`              |
+| `show_sensor_labels`    | boolean        | No       | Show sensor labels (Current, Target, etc.)       | `true`              |
+| `show_related_entities` | boolean        | No       | Display related entities from same device        | `false`             |
+
+## Usage Examples
+
+### Basic Thermostat
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.bedroom
+```
+
+### With Related Entities
+
+Perfect for controlling related switches (fan, quiet mode, etc.):
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.bedroom
+show_related_entities: true
+show_sensor_labels: true
+```
+
+### Fine Temperature Control
+
+For precise temperature adjustments:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.office
+step_size: 0.5
+temp_unit: °F
+```
+
+### Hide Temperature Unit
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.garage
+temp_unit: false
+```
+
+### Column Layout for Narrow Spaces
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.bathroom
+layout: col
+show_name: false
+```
+
+## Troubleshooting
+
+### Card not appearing
+
+1. Clear browser cache (Ctrl+Shift+R / Cmd+Shift+R)
+2. Verify the resource is loaded in Settings → Dashboards → Resources
+3. Check browser console (F12) for errors
+
+### Temperature not updating
+
+The card uses debouncing (1 second delay) to prevent excessive API calls. Wait a moment after adjusting the temperature.
+
+### Related entities not showing
+
+Ensure `show_related_entities: true` is set and that your climate device has related entities (switches, sensors) with the same device_id.
+
+## Development
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Setup
+
+```bash
+git clone https://github.com/mazsol/mini-thermostat-card.git
+cd mini-thermostat-card
+npm install
+```
+
+### Development Server
+
+```bash
+npm start
+```
+
+Access the dev server at `http://localhost:5001/mini-thermostat-card-test.js`
+
+### Build
+
+```bash
+npm run build
+```
+
+### Linting & Formatting
+
+```bash
+npm run lint
+npm run format
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feat/amazing-feature`)
+3. Commit your changes using [Conventional Commits](https://www.conventionalcommits.org/) (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feat/amazing-feature`)
+5. Open a Pull Request
 
 ## Support
 
-Hey dude! Help me out for a couple of :beers: or a :coffee:!
+If you like this card, please consider supporting the development:
 
 [![coffee](./assets/buymeacoffee-button.png)](https://www.buymeacoffee.com/zsoltj)
 
-## Options
+## Credits
 
-| Name                    | Type    | Requirement  | Description                                      | Default             |
-| ----------------------- | ------- | ------------ | ------------------------------------------------ | ------------------- |
-| type                    | string  | **Required** | `custom:mini-thermostat-card`                    |                     |
-| entity                  | string  | **Required** | Climate entity ID                                | `none`              |
-| name                    | string  | **Optional** | Card name (overrides entity friendly name)       | `Mini Thermostat Card` |
-| layout                  | string  | **Optional** | Layout orientation (`row` or `col`)              | `row`               |
-| temp_unit               | boolean/string | **Optional** | Temperature unit (true/false or custom)   | `true`              |
-| step_size               | number  | **Optional** | Temperature adjustment step size                 | `1`                 |
-| show_name               | boolean | **Optional** | Show card name                                   | `true`              |
-| show_sensor_labels      | boolean | **Optional** | Show sensor's label                              | `false`             |
-| show_related_entities   | boolean | **Optional** | Show related entities from same device           | `false`             |
+Created by [@mazsol](https://github.com/mazsol)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/mazsol/mini-thermostat-card.svg?style=for-the-badge
 [commits]: https://github.com/mazsol/mini-thermostat-card/commits/main
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/c/projects/frontend
 [license-shield]: https://img.shields.io/github/license/mazsol/mini-thermostat-card.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/mazsol/mini-thermostat-card.svg?style=for-the-badge
