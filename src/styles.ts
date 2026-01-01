@@ -57,6 +57,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   }
   #modes {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     color: var(--disabled-text-color);
   }
@@ -65,12 +66,21 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   }
   #relatedEntities {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     color: var(--disabled-text-color);
   }
   #relatedEntities .active-state {
     color: var(--mode-color);
   }
+
+  .debug-info {
+    font-size: 0.7rem;
+    color: gray;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+
   .sensors {
     font-size: var(--st-font-size-sensors, var(--paper-font-subhead_-_font-size));
     width: 100%;
@@ -111,16 +121,16 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     align-items: center;
     justify-content: center;
     width: 50%;
-    overflow: hidden;
-    flex-wrap: wrap;
     border: 1px solid var(--mode-color);
     border-radius: 10px;
   }
   .temp-control.row {
     flex-direction: row-reverse;
+    flex-wrap: wrap;
     width: 45%;
   }
   .temp-control.col {
+    flex-direction: column;
     width: 25%;
   }
   div.current-value {
@@ -145,7 +155,22 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   }
 
   /* Extra large screen sizes */
-  @media (max-width: 1200px) {
+  @media (max-width: 1280px) {
+    h3.current-value {
+      font-size: 24px;
+      font-weight: var(--ha_font_weight-medium, 500);
+      line-height: 24px;
+    }
+    span.temp-unit {
+      font-size: 16px;
+      line-height: 16px;
+    }
+    .temp-control.row {
+      width: 67%;
+    }
+    .temp-control.col {
+      width: 35%;
+    }
   }
 
   /* Large screen sizes */
