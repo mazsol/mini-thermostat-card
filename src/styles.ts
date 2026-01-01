@@ -131,7 +131,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   }
   .temp-control.col {
     flex-direction: column;
-    width: 25%;
+    width: 45%;
   }
   div.current-value {
     display: flex;
