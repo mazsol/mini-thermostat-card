@@ -58,7 +58,11 @@ export class MiniThermostatCardBase extends LitElement {
 
     const stateEntity = this.hass.entities[this.stateObj.entity_id];
     this.releatedEntities = Object.entries(this.hass.entities).filter(([key, entity]) => {
-      return key !== stateEntity.entity_id && entity['device_id'] === stateEntity.device_id;
+      return (
+        key !== stateEntity.entity_id &&
+        entity['device_id'] === stateEntity.device_id &&
+        entity['platform'] === stateEntity.platform
+      );
     });
 
     const temp = this.updatingValues ? this.temp : this.stateObj ? this.stateObj.attributes.temperature : html`---`;
@@ -109,6 +113,8 @@ export class MiniThermostatCardBase extends LitElement {
     const showTempUnit = tempUnit !== false;
     const stateString = this.haLocalize(this.stateObj.state, 'component.climate.entity_component._.state.');
 
+    const debugInfoHtml = this.renderDebugInfo();
+
     const sensorHtml = [
       html` ${this.showName ? html`<div class="card-title">${name}</div>` : ''} `,
       this.renderSensorItem({
@@ -129,6 +135,7 @@ export class MiniThermostatCardBase extends LitElement {
 
     return html`
       <ha-card class="${this.stateObj.state}">
+        ${debugInfoHtml}
         <section id="tempControls">
           <div class="sensors">
             <div class="sensor-container">${sensorHtml}</div>
@@ -147,7 +154,6 @@ export class MiniThermostatCardBase extends LitElement {
           </div>
         </section>
         <div id="modes">
-          <div class="modes-title"></div>
           ${this.stateObj.attributes.hvac_modes.map((hvacMode) => {
             const selected = this.stateObj.state === hvacMode;
             const modeLabel = this.haLocalize(hvacMode, 'component.climate.entity_component._.state.');
@@ -187,6 +193,10 @@ export class MiniThermostatCardBase extends LitElement {
           : ''}
       </ha-card>
     `;
+  }
+
+  protected renderDebugInfo() {
+    return html``;
   }
 
   private _debouncedCallService = debounceFn(

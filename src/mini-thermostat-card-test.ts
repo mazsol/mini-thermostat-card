@@ -3,6 +3,7 @@ import { customElement } from 'lit/decorators.js';
 import { MiniThermostatCardBase } from './mini-thermostat-card-base';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
+import { html } from 'lit-html';
 
 /* eslint no-console: 0 */
 console.info(
@@ -12,4 +13,11 @@ console.info(
 );
 
 @customElement('mini-thermostat-card-test')
-export class MiniThermostatCardTest extends MiniThermostatCardBase {}
+export class MiniThermostatCardTest extends MiniThermostatCardBase {
+  protected renderDebugInfo() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    return html` <div class="debug-info">${width}x${height}</div> `;
+  }
+}
