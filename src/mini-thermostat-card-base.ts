@@ -1,21 +1,29 @@
 // Base class for Mini Thermostat Card
-import { CSSResultGroup, LitElement, css, html } from 'lit';
+import { CSSResultGroup, LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { HomeAssistant } from './types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import debounceFn from 'debounce-fn';
 
-import { ICONS, MODE_ICONS } from './const';
+import { ICONS } from './const';
 import { MINI_THERMOSTAT_CARD_STYLE } from './styles';
+import { supportsFeature } from './ha-frontend/common/entity/supports-feature';
+import { computeDomain } from './ha-frontend/common/entity/compute_domain';
+import { ClimateEntityFeature, climateHvacModeIcon, compareClimateHvacModes } from './ha-frontend/data/climate';
+//import { computeDomain } from './ha-frontend/common/entity/compute_domain';
 
 export interface MiniThermostatCardConfig {
   entity: string;
   name?: string;
-  layout?: string;
+  layout?: 'row' | 'col'; // default: 'row'
   temp_unit: boolean | string;
   step_size?: number;
   show_name?: boolean;
   show_sensor_labels?: boolean;
+  show_hvac_modes?: boolean;
+  show_preset_modes?: boolean;
+  show_fan_modes?: boolean;
+  show_swing_modes?: boolean;
   show_related_entities?: boolean;
 }
 
@@ -25,10 +33,15 @@ export class MiniThermostatCardBase extends LitElement {
   updatingValues: boolean = false;
   stepSize: number = 1;
   showName: boolean = true;
+  showHvacModes: boolean = true;
+  showPresetModes: boolean = false;
+  showFanModes: boolean = false;
+  showSwingModes: boolean = false;
   showRelatedEntities: boolean = false;
   showLabels: boolean = false;
   temp: number = 0;
   stateObj!: HassEntity;
+  domain: string = '';
   releatedEntities!: [string, import('/workspaces/mini-thermostat-card/src/types').EntityRegistryEntry][];
   layout: string = 'row';
 
@@ -55,6 +68,7 @@ export class MiniThermostatCardBase extends LitElement {
       console.warn(`Entity ${this.config.entity} not found`);
       return;
     }
+    this.domain = computeDomain(this.stateObj.entity_id);
 
     const stateEntity = this.hass.entities[this.stateObj.entity_id];
     this.releatedEntities = Object.entries(this.hass.entities).filter(([key, entity]) => {
@@ -74,14 +88,19 @@ export class MiniThermostatCardBase extends LitElement {
   }
 
   public setConfig(config: MiniThermostatCardConfig): void {
-    if (!config.entity) {
-      throw new Error('You need to define an entity');
+    if (!config.entity || !['climate', 'water_heater'].includes(config.entity.split('.')[0])) {
+      throw new Error('Specify an entity from within the climate or water_heater domain');
     }
+
     this.config = config;
 
     this.updatingValues = false;
     this.stepSize = this.config?.step_size ? +this.config.step_size : 1;
     this.showName = this.config?.show_name ?? true;
+    this.showHvacModes = this.config?.show_hvac_modes ?? true;
+    this.showPresetModes = this.config?.show_preset_modes ?? false;
+    this.showFanModes = this.config?.show_fan_modes ?? false;
+    this.showSwingModes = this.config?.show_swing_modes ?? false;
     this.showRelatedEntities = this.config?.show_related_entities ?? false;
     this.showLabels = this.config?.show_sensor_labels ?? true;
     this.layout = this.config?.layout ?? 'row';
@@ -97,21 +116,32 @@ export class MiniThermostatCardBase extends LitElement {
 
   protected render() {
     if (!this.hass || !this.config) {
-      return html``;
+      return nothing;
     }
 
     if (!this.stateObj) {
       return html`<div class="not-found">Entity not found: ${this.config.entity}</div>`;
     }
 
+    const stateObj = this.stateObj;
+    const supportPresetMode = supportsFeature(stateObj, ClimateEntityFeature.PRESET_MODE);
+    const supportFanMode = supportsFeature(stateObj, ClimateEntityFeature.FAN_MODE);
+    const supportSwingMode = supportsFeature(stateObj, ClimateEntityFeature.SWING_MODE);
+    //const supportSwingHorizontalMode = supportsFeature(stateObj, ClimateEntityFeature.SWING_HORIZONTAL_MODE);
+
+    const showHvacModes = this.showHvacModes;
+    const showPresetModes = this.showPresetModes && supportPresetMode && stateObj.attributes.preset_modes;
+    const showFanModes = this.showFanModes && supportFanMode && stateObj.attributes.fan_modes;
+    const showSwingModes = this.showSwingModes && supportSwingMode && stateObj.attributes.swing_modes;
+
     const isLayoutRow = this.config.layout === 'row';
-    const name = this.showName ? this.config.name || this.stateObj.attributes.friendly_name || '' : '';
+    const name = this.showName ? this.config.name || stateObj.attributes.friendly_name || '' : '';
     const iconLT = isLayoutRow ? ICONS.PLUS : ICONS.UP;
     const iconRB = isLayoutRow ? ICONS.MINUS : ICONS.DOWN;
     const tempUnit = this.getTempUnit();
-    const currentTemp = this.stateObj ? this.stateObj.attributes.current_temperature : html`---`;
+    const currentTemp = stateObj ? stateObj.attributes.current_temperature : html`---`;
     const showTempUnit = tempUnit !== false;
-    const stateString = this.haLocalize(this.stateObj.state, 'component.climate.entity_component._.state.');
+    const stateString = this.haLocalize(stateObj.state, 'component.climate.entity_component._.state.');
 
     const debugInfoHtml = this.renderDebugInfo();
 
@@ -153,19 +183,10 @@ export class MiniThermostatCardBase extends LitElement {
             </ha-icon-button>
           </div>
         </section>
-        <div id="modes">
-          ${this.stateObj.attributes.hvac_modes.map((hvacMode) => {
-            const selected = this.stateObj.state === hvacMode;
-            const modeLabel = this.haLocalize(hvacMode, 'component.climate.entity_component._.state.');
-            return html`
-              <div class="mode-item ${selected ? 'selected-mode' : ''}" title="${modeLabel}">
-                <ha-icon-button class="" @click=${() => this.setHvacMode(this.stateObj, hvacMode)}>
-                  <ha-icon style="display:flex" icon="${MODE_ICONS[hvacMode]}"></ha-icon>
-                </ha-icon-button>
-              </div>
-            `;
-          })}
-        </div>
+        ${this.renderHvacModes({ hide: !showHvacModes, stateObj })}
+        ${this.renderPresetModes({ hide: !showPresetModes, stateObj })}
+        ${this.renderFanModes({ hide: !showFanModes, stateObj })}
+        ${this.renderSwingModes({ hide: !showSwingModes, stateObj })}
         ${this.showRelatedEntities
           ? html`
               <div id="relatedEntities">
@@ -201,7 +222,7 @@ export class MiniThermostatCardBase extends LitElement {
 
   private _debouncedCallService = debounceFn(
     (temp: number) => {
-      this._hass.callService('climate', 'set_temperature', {
+      this._hass.callService(this.domain, 'set_temperature', {
         entity_id: this.config.entity,
         temperature: temp,
       });
@@ -219,9 +240,45 @@ export class MiniThermostatCardBase extends LitElement {
 
   private setHvacMode(stateObj, hvacMode) {
     if (stateObj.state !== hvacMode) {
-      this._hass.callService('climate', 'set_hvac_mode', {
+      this._hass.callService(this.domain, 'set_hvac_mode', {
         entity_id: this.config.entity,
         hvac_mode: hvacMode,
+      });
+    }
+  }
+
+  private setPresetMode(stateObj, presetMode) {
+    if (stateObj.state !== presetMode) {
+      this._hass.callService(this.domain, 'set_preset_mode', {
+        entity_id: this.config.entity,
+        preset_mode: presetMode,
+      });
+    }
+  }
+
+  private setFanMode(stateObj, fanMode) {
+    if (stateObj.state !== fanMode) {
+      this._hass.callService(this.domain, 'set_fan_mode', {
+        entity_id: this.config.entity,
+        fan_mode: fanMode,
+      });
+    }
+  }
+
+  private setSwingMode(stateObj, swingMode) {
+    if (stateObj.state !== swingMode) {
+      this._hass.callService(this.domain, 'set_swing_mode', {
+        entity_id: this.config.entity,
+        swing_mode: swingMode,
+      });
+    }
+  }
+
+  private setSwingHorizontalMode(stateObj, swingHorizontalMode) {
+    if (stateObj.state !== swingHorizontalMode) {
+      this._hass.callService(this.domain, 'set_swing_horizontal_mode', {
+        entity_id: this.config.entity,
+        set_swing_horizontal_mode: swingHorizontalMode,
       });
     }
   }
@@ -236,12 +293,110 @@ export class MiniThermostatCardBase extends LitElement {
   }
 
   private renderSensorItem({ hide, state, details }) {
-    if (hide || typeof state === 'undefined') return html``;
+    if (hide || typeof state === 'undefined') return nothing;
 
     return html`
       <div class="sensor-row">
         ${details.heading ? html`<div class="sensor-header">${details.heading}:</div>` : ''}
         <div class="sensor-value">${state}</div>
+      </div>
+    `;
+  }
+
+  private renderHvacModes({ hide, stateObj }) {
+    if (hide || typeof stateObj === 'undefined') return nothing;
+
+    return html`
+      <div id="hvac-modes">
+        ${stateObj.attributes.hvac_modes
+          .concat()
+          .sort(compareClimateHvacModes)
+          .map((hvacMode) => {
+            const selected = stateObj.state === hvacMode;
+            const hvacModeLabel = this.haLocalize(hvacMode, 'component.climate.entity_component._.state.');
+            return html`
+              <div class="hvac-mode-item ${selected ? 'selected-mode' : ''}" title="${hvacModeLabel}">
+                <ha-icon-button class="" @click=${() => this.setHvacMode(stateObj, hvacMode)}>
+                  <ha-svg-icon .path=${climateHvacModeIcon(hvacMode)}></ha-svg-icon>
+                </ha-icon-button>
+              </div>
+            `;
+          })}
+      </div>
+    `;
+  }
+
+  private renderPresetModes({ hide, stateObj }) {
+    if (hide || typeof stateObj === 'undefined') return nothing;
+
+    return html`
+      <div id="preset-modes">
+        ${stateObj.attributes.preset_modes.map((presetMode) => {
+          const selected = stateObj.attributes.preset_mode === presetMode;
+          const presetModeLabel = this.haLocalize(presetMode, 'component.climate.entity_component._.state.');
+          return html`
+            <div class="preset-mode-item ${selected ? 'selected-mode' : ''}" title="${presetModeLabel}">
+              <ha-icon-button class="" @click=${() => this.setPresetMode(stateObj, presetMode)}>
+                <ha-attribute-icon
+                  .hass=${this.hass}
+                  .stateObj=${stateObj}
+                  attribute="preset_mode"
+                  .attributeValue=${presetMode}
+                ></ha-attribute-icon>
+              </ha-icon-button>
+            </div>
+          `;
+        })}
+      </div>
+    `;
+  }
+
+  private renderFanModes({ hide, stateObj }) {
+    if (hide || typeof stateObj === 'undefined') return nothing;
+
+    return html`
+      <div id="fan-modes">
+        ${stateObj.attributes.fan_modes.map((fanMode) => {
+          const selected = stateObj.attributes.fan_mode === fanMode;
+          const fanModeLabel = this.haLocalize(fanMode, 'component.climate.entity_component._.state.');
+          return html`
+            <div class="fan-mode-item ${selected ? 'selected-mode' : ''}" title="${fanModeLabel}">
+              <ha-icon-button class="" @click=${() => this.setFanMode(stateObj, fanMode)}>
+                <ha-attribute-icon
+                  .hass=${this.hass}
+                  .stateObj=${stateObj}
+                  attribute="fan_mode"
+                  .attributeValue=${fanMode}
+                ></ha-attribute-icon>
+              </ha-icon-button>
+            </div>
+          `;
+        })}
+      </div>
+    `;
+  }
+
+  private renderSwingModes({ hide, stateObj }) {
+    if (hide || typeof stateObj === 'undefined') return nothing;
+
+    return html`
+      <div id="swing-modes">
+        ${stateObj.attributes.swing_modes.map((swingMode) => {
+          const selected = stateObj.attributes.swing_mode === swingMode;
+          const swingModeLabel = this.haLocalize(swingMode, 'component.climate.entity_component._.state.');
+          return html`
+            <div class="swing-mode-item ${selected ? 'selected-mode' : ''}" title="${swingModeLabel}">
+              <ha-icon-button class="" @click=${() => this.setSwingMode(stateObj, swingMode)}>
+                <ha-attribute-icon
+                  .hass=${this.hass}
+                  .stateObj=${stateObj}
+                  attribute="swing_mode"
+                  .attributeValue=${swingMode}
+                ></ha-attribute-icon>
+              </ha-icon-button>
+            </div>
+          `;
+        })}
       </div>
     `;
   }
@@ -258,10 +413,10 @@ export class MiniThermostatCardBase extends LitElement {
     const entity_id = stateObj.entity_id;
     return stateObj.attributes.icon
       ? stateObj.attributes.icon
-      : this.getIconByDomain(device_class, entity_id, stateObj.state);
+      : this.getIconByEntityId(device_class, entity_id, stateObj.state);
   }
 
-  private getIconByDomain(device_class, entity_id, state) {
+  private getIconByEntityId(device_class, entity_id, state) {
     let iconOn = '';
     let iconOff = '';
     switch (device_class) {
@@ -279,6 +434,9 @@ export class MiniThermostatCardBase extends LitElement {
           } else if (entity_id.includes('panel_light')) {
             iconOn = 'mdi:lightbulb';
             iconOff = 'mdi:lightbulb-outline';
+          } else if (entity_id.includes('health_mode')) {
+            iconOn = 'mdi:pine-tree';
+            iconOff = 'mdi:pine-tree-off';
           }
         }
         if (iconOn === '') {

@@ -2,31 +2,31 @@ import { css } from 'lit';
 
 export const MINI_THERMOSTAT_CARD_STYLE = css`
   .auto {
-    --mode-color: var(--state-climate-auto-color);
+    --hvac-mode-color: var(--state-climate-auto-color);
   }
   .cool {
-    --mode-color: var(--state-climate-cool-color);
+    --hvac-mode-color: var(--state-climate-cool-color);
   }
   .dry {
-    --mode-color: var(--state-climate-dry-color);
+    --hvac-mode-color: var(--state-climate-dry-color);
   }
   .eco {
-    --mode-color: var(--state-climate-eco-color);
+    --hvac-mode-color: var(--state-climate-eco-color);
   }
   .fan_only {
-    --mode-color: var(--state-climate-fan_only-color);
+    --hvac-mode-color: var(--state-climate-fan_only-color);
   }
   .heat {
-    --mode-color: var(--state-climate-heat-color);
+    --hvac-mode-color: var(--state-climate-heat-color);
   }
   .idle {
-    --mode-color: var(--state-climate-idle-color);
+    --hvac-mode-color: var(--state-climate-idle-color);
   }
   .manual {
-    --mode-color: var(--state-climate-manual-color);
+    --hvac-mode-color: var(--state-climate-manual-color);
   }
   .off {
-    --mode-color: var(--state-climate-off-color);
+    --hvac-mode-color: var(--state-climate-off-color);
   }
   ha-card {
     -webkit-font-smoothing: var(--paper-font-body1_-_-webkit-font-smoothing);
@@ -55,14 +55,41 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     padding-right: 10px;
     padding-top: 10px;
   }
-  #modes {
+  #hvac-modes {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     color: var(--disabled-text-color);
   }
-  #modes .selected-mode {
-    color: var(--mode-color);
+  #hvac-modes .selected-mode {
+    color: var(--hvac-mode-color);
+  }
+  #preset-modes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: var(--disabled-text-color);
+  }
+  #preset-modes .selected-mode {
+    color: var(--hvac-mode-color);
+  }
+  #fan-modes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: var(--disabled-text-color);
+  }
+  #fan-modes .selected-mode {
+    color: var(--hvac-mode-color);
+  }
+  #swing-modes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: var(--disabled-text-color);
+  }
+  #swing-modes .selected-mode {
+    color: var(--hvac-mode-color);
   }
   #relatedEntities {
     display: flex;
@@ -71,7 +98,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     color: var(--disabled-text-color);
   }
   #relatedEntities .active-state {
-    color: var(--mode-color);
+    color: var(--hvac-mode-color);
   }
 
   .debug-info {
@@ -99,7 +126,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     text-align: center;
     font-size: var(--name-font-size);
     font-weight: 500;
-    border-bottom: 1px solid var(--mode-color);
+    border-bottom: 1px solid var(--hvac-mode-color);
     margin-bottom: 4px;
   }
   .sensor-row {
@@ -121,7 +148,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     align-items: center;
     justify-content: center;
     width: 50%;
-    border: 1px solid var(--mode-color);
+    border: 1px solid var(--hvac-mode-color);
     border-radius: 10px;
   }
   .temp-control.row {
