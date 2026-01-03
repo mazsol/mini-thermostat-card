@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](///compare/1.0.3...1.1.0) (2026-01-03)
+
+### Features
+
+* add debug info (screen resolution) to the test version 588cfd6
+* add dropdown display mode for climate controls 17bdf45
+* add support for preset, fan, and swing mode controls 5ec515e
+
+### Bug Fixes
+
+* correct mode control localization and icon rendering fa16c63
+
 ## [1.0.3](///compare/1.0.2...1.0.3) (2025-12-31)
 
 ## [1.0.2](https://github.com/mazsol/mini-thermostat-card/compare/1.0.1...1.0.2) (2025-11-16)
