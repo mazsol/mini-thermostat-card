@@ -1,5 +1,8 @@
 export const CARD_VERSION = '1.0.3';
 
+export const UNAVAILABLE = 'unavailable';
+export const UNKNOWN = 'unknown';
+
 export const ICONS = {
   UP: 'hass:chevron-up',
   DOWN: 'hass:chevron-down',

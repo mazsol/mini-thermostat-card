@@ -34,6 +34,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     font-weight: var(--paper-font-body1_-_font-weight);
     line-height: var(--paper-font-body1_-_line-height);
     padding-bottom: calc(var(--st-spacing, var(--st-default-spacing)) * 2);
+    overflow: hidden;
     --auto-color: green;
     --heat_cool-color: springgreen;
     --cool-color: #2b9af9;
@@ -48,6 +49,9 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
 
     --mdc-icon-button-size: 36px;
     --mdc-icon-size: 24px;
+  }
+  ha-control-select-menu {
+    width: 140px;
   }
   #tempControls {
     display: flex;
@@ -100,12 +104,47 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   #relatedEntities .active-state {
     color: var(--hvac-mode-color);
   }
+  #dropdown-modes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    margin: 5px;
+  }
 
   .debug-info {
     font-size: 0.7rem;
     color: gray;
     margin-bottom: 2px;
     text-align: center;
+  }
+
+  .hvac-auto {
+    color: var(--state-climate-auto-color);
+  }
+  .hvac-cool {
+    color: var(--state-climate-cool-color);
+  }
+  .hvac-dry {
+    color: var(--state-climate-dry-color);
+  }
+  .hvac-eco {
+    color: var(--state-climate-eco-color);
+  }
+  .hvac-fan_only {
+    color: var(--state-climate-fan_only-color);
+  }
+  .hvac-heat {
+    color: var(--state-climate-heat-color);
+  }
+  .hvac-idle {
+    color: var(--state-climate-idle-color);
+  }
+  .hvac-manual {
+    color: var(--state-climate-manual-color);
+  }
+  .hvac-off {
+    color: var(--state-climate-off-color);
   }
 
   .sensors {

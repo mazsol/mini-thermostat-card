@@ -18,6 +18,6 @@ export class MiniThermostatCardTest extends MiniThermostatCardBase {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    return html` <div class="debug-info">${width}x${height}</div> `;
+    return html` <div class="debug-info">Screen: ${width}x${height}</div>`;
   }
 }

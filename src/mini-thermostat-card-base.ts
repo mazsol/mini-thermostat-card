@@ -4,12 +4,14 @@ import { property } from 'lit/decorators.js';
 import { HomeAssistant } from './types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import debounceFn from 'debounce-fn';
+import { mdiTuneVariant } from '@mdi/js';
 
-import { ICONS } from './const';
+import { ICONS, UNAVAILABLE } from './const';
 import { MINI_THERMOSTAT_CARD_STYLE } from './styles';
 import { supportsFeature } from './ha-frontend/common/entity/supports-feature';
 import { computeDomain } from './ha-frontend/common/entity/compute_domain';
 import { ClimateEntityFeature, climateHvacModeIcon, compareClimateHvacModes } from './ha-frontend/data/climate';
+import { stopPropagation } from './ha-frontend/common/dom/stop_propagation';
 //import { computeDomain } from './ha-frontend/common/entity/compute_domain';
 
 export interface MiniThermostatCardConfig {
@@ -20,6 +22,7 @@ export interface MiniThermostatCardConfig {
   step_size?: number;
   show_name?: boolean;
   show_sensor_labels?: boolean;
+  display_mode?: 'buttons' | 'dropdown'; // default: 'buttons'
   show_hvac_modes?: boolean;
   show_preset_modes?: boolean;
   show_fan_modes?: boolean;
@@ -33,6 +36,7 @@ export class MiniThermostatCardBase extends LitElement {
   updatingValues: boolean = false;
   stepSize: number = 1;
   showName: boolean = true;
+  displayMode: 'buttons' | 'dropdown' = 'buttons';
   showHvacModes: boolean = true;
   showPresetModes: boolean = false;
   showFanModes: boolean = false;
@@ -43,7 +47,7 @@ export class MiniThermostatCardBase extends LitElement {
   stateObj!: HassEntity;
   domain: string = '';
   releatedEntities!: [string, import('/workspaces/mini-thermostat-card/src/types').EntityRegistryEntry][];
-  layout: string = 'row';
+  layout: 'row' | 'col' = 'row';
 
   set hass(hass: HomeAssistant) {
     const oldHass = this._hass;
@@ -97,6 +101,7 @@ export class MiniThermostatCardBase extends LitElement {
     this.updatingValues = false;
     this.stepSize = this.config?.step_size ? +this.config.step_size : 1;
     this.showName = this.config?.show_name ?? true;
+    this.displayMode = this.config?.display_mode ?? 'buttons';
     this.showHvacModes = this.config?.show_hvac_modes ?? true;
     this.showPresetModes = this.config?.show_preset_modes ?? false;
     this.showFanModes = this.config?.show_fan_modes ?? false;
@@ -183,10 +188,22 @@ export class MiniThermostatCardBase extends LitElement {
             </ha-icon-button>
           </div>
         </section>
-        ${this.renderHvacModes({ hide: !showHvacModes, stateObj })}
-        ${this.renderPresetModes({ hide: !showPresetModes, stateObj })}
-        ${this.renderFanModes({ hide: !showFanModes, stateObj })}
-        ${this.renderSwingModes({ hide: !showSwingModes, stateObj })}
+
+        ${this.displayMode === 'buttons'
+          ? html`
+              ${this.renderHvacModes({ hide: !showHvacModes, stateObj })}
+              ${this.renderPresetModes({ hide: !showPresetModes, stateObj })}
+              ${this.renderFanModes({ hide: !showFanModes, stateObj })}
+              ${this.renderSwingModes({ hide: !showSwingModes, stateObj })}
+            `
+          : html`
+              <div id="dropdown-modes">
+                ${this.renderHvacModesDropdown({ hide: !showHvacModes, stateObj })}
+                ${this.renderPresetModesDropdown({ hide: !showPresetModes, stateObj })}
+                ${this.renderFanModesDropdown({ hide: !showFanModes, stateObj })}
+                ${this.renderSwingModesDropdown({ hide: !showSwingModes, stateObj })}
+              </div>
+            `}
         ${this.showRelatedEntities
           ? html`
               <div id="relatedEntities">
@@ -303,6 +320,39 @@ export class MiniThermostatCardBase extends LitElement {
     `;
   }
 
+  private renderModesDropdown({ hide, stateObj, label, value, disabled, handleOperation, icon, listItems }) {
+    if (hide || typeof stateObj === 'undefined') return nothing;
+
+    return html`
+      <ha-control-select-menu
+        .label=${this.hass.localize(label)}
+        .value=${value}
+        .disabled=${disabled}
+        fixedMenuPosition
+        naturalMenuWidth
+        @selected=${handleOperation}
+        @closed=${stopPropagation}
+      >
+        ${icon} ${listItems}
+      </ha-control-select-menu>
+    `;
+  }
+
+  private getAttributeIcon({ slot, stateObj, attribute, attributeValue }) {
+    return attributeValue
+      ? html`
+          <ha-attribute-icon
+            class="${attribute}-${attributeValue}"
+            slot=${slot}
+            .hass=${this.hass}
+            .stateObj=${stateObj}
+            attribute=${attribute}
+            .attributeValue=${attributeValue}
+          ></ha-attribute-icon>
+        `
+      : html` <ha-svg-icon slot="icon" .path=${mdiTuneVariant}></ha-svg-icon> `;
+  }
+
   private renderHvacModes({ hide, stateObj }) {
     if (hide || typeof stateObj === 'undefined') return nothing;
 
@@ -326,6 +376,31 @@ export class MiniThermostatCardBase extends LitElement {
     `;
   }
 
+  private renderHvacModesDropdown({ hide, stateObj }) {
+    const listItems = stateObj.attributes.hvac_modes
+      .concat()
+      .sort(compareClimateHvacModes)
+      .map((mode) => {
+        const label = this.haLocalize(mode, 'component.climate.entity_component._.state.');
+        return html`
+          <ha-list-item .value=${mode} graphic="icon">
+            <ha-svg-icon class="hvac-${mode}" slot="graphic" .path=${climateHvacModeIcon(mode)}></ha-svg-icon>
+            ${label}
+          </ha-list-item>
+        `;
+      });
+    return this.renderModesDropdown({
+      hide,
+      stateObj,
+      label: 'ui.card.climate.mode',
+      value: stateObj.state,
+      disabled: stateObj.state === UNAVAILABLE,
+      handleOperation: (ev) => this.setHvacMode(stateObj, ev.target.value),
+      icon: nothing,
+      listItems: listItems,
+    });
+  }
+
   private renderPresetModes({ hide, stateObj }) {
     if (hide || typeof stateObj === 'undefined') return nothing;
 
@@ -337,18 +412,50 @@ export class MiniThermostatCardBase extends LitElement {
           return html`
             <div class="preset-mode-item ${selected ? 'selected-mode' : ''}" title="${presetModeLabel}">
               <ha-icon-button class="" @click=${() => this.setPresetMode(stateObj, presetMode)}>
-                <ha-attribute-icon
-                  .hass=${this.hass}
-                  .stateObj=${stateObj}
-                  attribute="preset_mode"
-                  .attributeValue=${presetMode}
-                ></ha-attribute-icon>
+                ${this.getAttributeIcon({
+                  slot: 'icon',
+                  stateObj,
+                  attribute: 'preset_mode',
+                  attributeValue: presetMode,
+                })}
               </ha-icon-button>
             </div>
           `;
         })}
       </div>
     `;
+  }
+
+  private renderPresetModesDropdown({ hide, stateObj }) {
+    const listItems = stateObj.attributes.preset_modes!.map((mode) => {
+      const label = this.haLocalize(mode, 'component.climate.entity_component._.state_attributes.preset_mode.state.');
+      return html`
+        <ha-list-item .value=${mode} graphic="icon">
+          ${this.getAttributeIcon({
+            slot: 'graphic',
+            stateObj,
+            attribute: 'preset_mode',
+            attributeValue: mode,
+          })}
+          ${label}
+        </ha-list-item>
+      `;
+    });
+    return this.renderModesDropdown({
+      hide,
+      stateObj,
+      label: 'component.climate.entity_component._.state_attributes.preset_mode.name',
+      value: stateObj.attributes.preset_mode,
+      disabled: stateObj.attributes.preset_mode === UNAVAILABLE,
+      handleOperation: (ev) => this.setPresetMode(stateObj, ev.target.value),
+      icon: this.getAttributeIcon({
+        slot: 'icon',
+        stateObj,
+        attribute: 'preset_mode',
+        attributeValue: stateObj.attributes.preset_mode + '-B',
+      }),
+      listItems: listItems,
+    });
   }
 
   private renderFanModes({ hide, stateObj }) {
@@ -362,18 +469,50 @@ export class MiniThermostatCardBase extends LitElement {
           return html`
             <div class="fan-mode-item ${selected ? 'selected-mode' : ''}" title="${fanModeLabel}">
               <ha-icon-button class="" @click=${() => this.setFanMode(stateObj, fanMode)}>
-                <ha-attribute-icon
-                  .hass=${this.hass}
-                  .stateObj=${stateObj}
-                  attribute="fan_mode"
-                  .attributeValue=${fanMode}
-                ></ha-attribute-icon>
+                ${this.getAttributeIcon({
+                  slot: 'icon',
+                  stateObj,
+                  attribute: 'fan_mode',
+                  attributeValue: fanMode,
+                })}
               </ha-icon-button>
             </div>
           `;
         })}
       </div>
     `;
+  }
+
+  private renderFanModesDropdown({ hide, stateObj }) {
+    const listItems = stateObj.attributes.fan_modes!.map((mode) => {
+      const label = this.haLocalize(mode, 'component.climate.entity_component._.state_attributes.fan_mode.state.');
+      return html`
+        <ha-list-item .value=${mode} graphic="icon">
+          ${this.getAttributeIcon({
+            slot: 'graphic',
+            stateObj,
+            attribute: 'fan_mode',
+            attributeValue: mode,
+          })}
+          ${label}
+        </ha-list-item>
+      `;
+    });
+    return this.renderModesDropdown({
+      hide,
+      stateObj,
+      label: 'component.climate.entity_component._.state_attributes.fan_mode.name',
+      value: stateObj.attributes.fan_mode,
+      disabled: stateObj.attributes.fan_mode === UNAVAILABLE,
+      handleOperation: (ev) => this.setFanMode(stateObj, ev.target.value),
+      icon: this.getAttributeIcon({
+        slot: 'icon',
+        stateObj,
+        attribute: 'fan_mode',
+        attributeValue: stateObj.attributes.fan_mode,
+      }),
+      listItems: listItems,
+    });
   }
 
   private renderSwingModes({ hide, stateObj }) {
@@ -387,18 +526,50 @@ export class MiniThermostatCardBase extends LitElement {
           return html`
             <div class="swing-mode-item ${selected ? 'selected-mode' : ''}" title="${swingModeLabel}">
               <ha-icon-button class="" @click=${() => this.setSwingMode(stateObj, swingMode)}>
-                <ha-attribute-icon
-                  .hass=${this.hass}
-                  .stateObj=${stateObj}
-                  attribute="swing_mode"
-                  .attributeValue=${swingMode}
-                ></ha-attribute-icon>
+                ${this.getAttributeIcon({
+                  slot: 'icon',
+                  stateObj,
+                  attribute: 'swing_mode',
+                  attributeValue: swingMode,
+                })}
               </ha-icon-button>
             </div>
           `;
         })}
       </div>
     `;
+  }
+
+  private renderSwingModesDropdown({ hide, stateObj }) {
+    const listItems = stateObj.attributes.swing_modes!.map((mode) => {
+      const label = this.haLocalize(mode, 'component.climate.entity_component._.state_attributes.swing_mode.state.');
+      return html`
+        <ha-list-item .value=${mode} graphic="icon">
+          ${this.getAttributeIcon({
+            slot: 'graphic',
+            stateObj,
+            attribute: 'swing_mode',
+            attributeValue: mode,
+          })}
+          ${label}
+        </ha-list-item>
+      `;
+    });
+    return this.renderModesDropdown({
+      hide,
+      stateObj,
+      label: 'component.climate.entity_component._.state_attributes.swing_mode.name',
+      value: stateObj.attributes.swing_mode,
+      disabled: stateObj.attributes.swing_mode === UNAVAILABLE,
+      handleOperation: (ev) => this.setSwingMode(stateObj, ev.target.value),
+      icon: this.getAttributeIcon({
+        slot: 'icon',
+        stateObj,
+        attribute: 'swing_mode',
+        attributeValue: stateObj.attributes.swing_mode,
+      }),
+      listItems: listItems,
+    });
   }
 
   private haLocalize(label, prefix = '') {
