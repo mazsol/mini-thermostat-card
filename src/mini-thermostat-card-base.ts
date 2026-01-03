@@ -342,7 +342,6 @@ export class MiniThermostatCardBase extends LitElement {
     return attributeValue
       ? html`
           <ha-attribute-icon
-            class="${attribute}-${attributeValue}"
             slot=${slot}
             .hass=${this.hass}
             .stateObj=${stateObj}
@@ -408,12 +407,15 @@ export class MiniThermostatCardBase extends LitElement {
       <div id="preset-modes">
         ${stateObj.attributes.preset_modes.map((presetMode) => {
           const selected = stateObj.attributes.preset_mode === presetMode;
-          const presetModeLabel = this.haLocalize(presetMode, 'component.climate.entity_component._.state.');
+          const presetModeLabel = this.haLocalize(
+            presetMode,
+            'component.climate.entity_component._.state_attributes.preset_mode.state.',
+          );
           return html`
             <div class="preset-mode-item ${selected ? 'selected-mode' : ''}" title="${presetModeLabel}">
-              <ha-icon-button class="" @click=${() => this.setPresetMode(stateObj, presetMode)}>
+              <ha-icon-button @click=${() => this.setPresetMode(stateObj, presetMode)}>
                 ${this.getAttributeIcon({
-                  slot: 'icon',
+                  slot: '',
                   stateObj,
                   attribute: 'preset_mode',
                   attributeValue: presetMode,
@@ -465,12 +467,15 @@ export class MiniThermostatCardBase extends LitElement {
       <div id="fan-modes">
         ${stateObj.attributes.fan_modes.map((fanMode) => {
           const selected = stateObj.attributes.fan_mode === fanMode;
-          const fanModeLabel = this.haLocalize(fanMode, 'component.climate.entity_component._.state.');
+          const fanModeLabel = this.haLocalize(
+            fanMode,
+            'component.climate.entity_component._.state_attributes.fan_mode.state.',
+          );
           return html`
             <div class="fan-mode-item ${selected ? 'selected-mode' : ''}" title="${fanModeLabel}">
-              <ha-icon-button class="" @click=${() => this.setFanMode(stateObj, fanMode)}>
+              <ha-icon-button @click=${() => this.setFanMode(stateObj, fanMode)}>
                 ${this.getAttributeIcon({
-                  slot: 'icon',
+                  slot: '',
                   stateObj,
                   attribute: 'fan_mode',
                   attributeValue: fanMode,
@@ -522,12 +527,15 @@ export class MiniThermostatCardBase extends LitElement {
       <div id="swing-modes">
         ${stateObj.attributes.swing_modes.map((swingMode) => {
           const selected = stateObj.attributes.swing_mode === swingMode;
-          const swingModeLabel = this.haLocalize(swingMode, 'component.climate.entity_component._.state.');
+          const swingModeLabel = this.haLocalize(
+            swingMode,
+            'component.climate.entity_component._.state_attributes.swing_mode.state.',
+          );
           return html`
             <div class="swing-mode-item ${selected ? 'selected-mode' : ''}" title="${swingModeLabel}">
               <ha-icon-button class="" @click=${() => this.setSwingMode(stateObj, swingMode)}>
                 ${this.getAttributeIcon({
-                  slot: 'icon',
+                  slot: '',
                   stateObj,
                   attribute: 'swing_mode',
                   attributeValue: swingMode,
