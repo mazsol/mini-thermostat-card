@@ -15,6 +15,8 @@ A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. 
 - 🔧 **Customizable** - Multiple configuration options to match your needs
 - 🌡️ **Temperature Control** - Precise temperature adjustment with custom step size
 - 🔄 **HVAC Modes** - Quick access to all climate modes with visual icons
+- 📋 **Display Modes** - Choose between buttons or dropdown layout for mode controls
+- 🎛️ **Mode Controls** - Support for preset, fan, and swing modes
 - 🔗 **Related Entities** - Display and control related devices (switches, fans, etc.)
 - 🌍 **Localization** - Supports Home Assistant's multi-language system
 - ⚡ **Debounced Updates** - Smart temperature updates to reduce API calls
@@ -23,10 +25,16 @@ A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. 
 
 <!-- TODO: Add screenshots -->
 ### Desktop View
-![Desktop View](./assets/mini-thermostat-screenshot-desktop.png)
+<img src="./assets/mini-thermostat-screenshot-desktop.png" alt="Desktop View" width="495">
+
+### With Preset Modes
+<img src="./assets/mini-thermostat-screenshot-preset.png" alt="Preset Modes" width="495">
+
+### Dropdown Display Mode
+<img src="./assets/mini-thermostat-screenshot-dropdown.png" alt="Dropdown Mode" width="495">
 
 ### Mobile View
-![Mobile View](./assets/mini-thermostat-screenshot-mobile.png)
+<img src="./assets/mini-thermostat-screenshot-mobile.png" alt="Mobile View" width="495">
 
 ### Different Layouts
 | Row Layout | Column Layout |
@@ -47,7 +55,22 @@ A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. 
 8. Click "Add"
 9. Find "Mini Thermostat Card" in the list
 10. Click "Download"
-11. Restart Home Assistant
+11. **Add the resource** (HACS does not do this automatically):
+
+    #### UI Mode
+    - Go to Settings → Dashboards → Resources
+    - Click "Add Resource"
+    - URL: `/local/community/mini-thermostat-card/mini-thermostat-card.js`
+    - Resource type: `JavaScript Module`
+
+    #### YAML Mode
+    ```yaml
+    resources:
+      - url: /local/community/mini-thermostat-card/mini-thermostat-card.js
+        type: module
+    ```
+
+12. Restart Home Assistant
 
 ### Manual Installation
 
@@ -88,6 +111,11 @@ temp_unit: °C
 step_size: 0.5
 show_name: true
 show_sensor_labels: true
+display_mode: buttons
+show_hvac_modes: true
+show_preset_modes: false
+show_fan_modes: false
+show_swing_modes: false
 show_related_entities: true
 ```
 
@@ -103,6 +131,11 @@ show_related_entities: true
 | `step_size`             | number         | No       | Temperature adjustment step size                 | `1`                 |
 | `show_name`             | boolean        | No       | Display card name                                | `true`              |
 | `show_sensor_labels`    | boolean        | No       | Show sensor labels (Current, Target, etc.)       | `true`              |
+| `display_mode`          | string         | No       | Mode display type: `buttons` or `dropdown`       | `buttons`           |
+| `show_hvac_modes`       | boolean        | No       | Show HVAC mode controls                          | `true`              |
+| `show_preset_modes`     | boolean        | No       | Show preset mode controls                        | `false`             |
+| `show_fan_modes`        | boolean        | No       | Show fan mode controls                           | `false`             |
+| `show_swing_modes`      | boolean        | No       | Show swing mode controls                         | `false`             |
 | `show_related_entities` | boolean        | No       | Display related entities from same device        | `false`             |
 
 ## Usage Examples
@@ -153,6 +186,34 @@ layout: col
 show_name: false
 ```
 
+### Dropdown Mode for Compact Display
+
+Use dropdown menus instead of buttons for a more compact layout:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+display_mode: dropdown
+show_hvac_modes: true
+show_preset_modes: true
+show_fan_modes: true
+show_swing_modes: true
+```
+
+### Advanced Climate Control
+
+Show all available mode controls with button layout:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.bedroom
+display_mode: buttons
+show_hvac_modes: true
+show_preset_modes: true
+show_fan_modes: true
+show_swing_modes: true
+```
+
 ## Troubleshooting
 
 ### Card not appearing
@@ -190,7 +251,26 @@ npm install
 npm start
 ```
 
-Access the dev server at `http://localhost:5001/mini-thermostat-card-test.js`
+The dev server will be available at `http://<YOUR_DEV_MACHINE_IP>:5001/mini-thermostat-card-test.js`
+
+**Add the development resource to Home Assistant:**
+
+Replace `<YOUR_DEV_MACHINE_IP>` with your development machine's IP address (e.g., `192.168.1.100`)
+
+#### UI Mode
+- Go to Settings → Dashboards → Resources
+- Click "Add Resource"
+- URL: `http://<YOUR_DEV_MACHINE_IP>:5001/mini-thermostat-card-test.js`
+- Resource type: `JavaScript Module`
+
+#### YAML Mode
+```yaml
+resources:
+  - url: http://<YOUR_DEV_MACHINE_IP>:5001/mini-thermostat-card-test.js
+    type: module
+```
+
+Then add the card to your dashboard with type: `custom:mini-thermostat-card-test`
 
 ### Build
 
@@ -219,7 +299,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 If you like this card, please consider supporting the development:
 
-[![coffee](./assets/buymeacoffee-button.png)](https://www.buymeacoffee.com/zsoltj)
+<a href="https://www.buymeacoffee.com/zsoltj" target="_blank">
+  <img src="./assets/buymeacoffee-button.png" alt="Buy Me A Coffee" height="60">
+</a>
 
 ## Credits
 
