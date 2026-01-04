@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.0](///compare/1.1.0...1.2.0) (2026-01-04)
+
+### Features
+
+* add visual card editor with localization support 7eb95e5
+
 ## [1.1.0](///compare/1.0.3...1.1.0) (2026-01-03)
 
 ### Features
