@@ -153,12 +153,16 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     display: flex;
     flex-direction: column;
     gap: 0;
+    min-width: 0;
+    overflow: hidden;
   }
   .sensor-container {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0;
+    min-width: 0; /* Allow flex children to shrink below content size */
+    overflow: hidden;
   }
   .card-title {
     grid-column: 1 / 3;
@@ -167,6 +171,11 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     font-weight: 500;
     border-bottom: 1px solid var(--hvac-mode-color);
     margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
   }
   .sensor-row {
     display: grid;
@@ -218,6 +227,16 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
   span.temp-unit {
     font-size: 18px;
     line-height: 18px;
+  }
+
+  /* Very large cards (9+ columns, wide screens) */
+  @media (min-width: 1281px) {
+    .temp-control.row {
+      width: 65%;
+    }
+    .temp-control.col {
+      width: 45%;
+    }
   }
 
   /* Extra large screen sizes */

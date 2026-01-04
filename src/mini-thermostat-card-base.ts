@@ -14,11 +14,48 @@ import { ClimateEntityFeature, climateHvacModeIcon, compareClimateHvacModes } fr
 import { stopPropagation } from './ha-frontend/common/dom/stop_propagation';
 //import { computeDomain } from './ha-frontend/common/entity/compute_domain';
 
+// Helper function for getStubConfig - shared between both card versions
+export function getDefaultStubConfig(hass?: HomeAssistant): MiniThermostatCardConfig {
+  // Find first climate or water_heater entity
+  let entity = '';
+  if (hass) {
+    const entities = Object.keys(hass.states);
+    entity =
+      entities.find((eid) => {
+        const domain = computeDomain(eid);
+        return domain === 'climate' || domain === 'water_heater';
+      }) || '';
+  }
+
+  return {
+    entity,
+    layout: 'row',
+    display_mode: 'buttons',
+    show_name: true,
+    show_sensor_labels: true,
+    show_hvac_modes: true,
+    show_preset_modes: false,
+    show_fan_modes: false,
+    show_swing_modes: false,
+    show_related_entities: false,
+    step_size: 1,
+    temp_unit: '',
+    grid_options: {
+      columns: 6,
+      min_columns: 6,
+      max_columns: 12,
+      rows: 3,
+      min_rows: 2,
+      max_rows: 4,
+    },
+  };
+}
+
 export interface MiniThermostatCardConfig {
   entity: string;
   name?: string;
   layout?: 'row' | 'col'; // default: 'row'
-  temp_unit: boolean | string;
+  temp_unit?: boolean | string; // optional, defaults to hass unit
   step_size?: number;
   show_name?: boolean;
   show_sensor_labels?: boolean;
@@ -28,6 +65,14 @@ export interface MiniThermostatCardConfig {
   show_fan_modes?: boolean;
   show_swing_modes?: boolean;
   show_related_entities?: boolean;
+  grid_options?: {
+    columns?: number;
+    min_columns?: number;
+    max_columns?: number;
+    rows?: number;
+    min_rows?: number;
+    max_rows?: number;
+  };
 }
 
 export class MiniThermostatCardBase extends LitElement {
@@ -627,10 +672,20 @@ export class MiniThermostatCardBase extends LitElement {
   }
 
   private getTempUnit() {
-    if (['boolean', 'string'].includes(typeof this.config.temp_unit)) {
-      return this.config?.temp_unit;
+    const configValue = this.config.temp_unit;
+
+    // If explicitly set to false, don't show unit
+    if (configValue === false) {
+      return false;
     }
-    return this.hass.config?.unit_system?.temperature ?? false;
+
+    // If string and not empty, use the provided string
+    if (typeof configValue === 'string' && configValue.trim() !== '') {
+      return configValue;
+    }
+
+    // If true, empty string, or undefined, use hass default
+    return this.hass.config?.unit_system?.temperature || '°C';
   }
 
   static get styles(): CSSResultGroup {

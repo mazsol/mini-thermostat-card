@@ -5,5 +5,34 @@
     "invalid_config_entity": "Specify an entity from within the climate domain",
     "show_warning": "Show Warning",
     "show_error": "Show Error"
+  },
+  "card": {
+    "name": "Mini Thermostat",
+    "description": "A compact thermostat card with customizable modes and controls",
+    "name_test": "Mini Thermostat (Test)",
+    "description_test": "Test version with debug info and latest features"
+  },
+  "editor": {
+    "entity": "Entity",
+    "name": "Name (Optional)",
+    "layout": "Layout",
+    "layout_row": "Row",
+    "layout_col": "Column",
+    "display_mode": "Display Mode",
+    "display_buttons": "Buttons",
+    "display_dropdown": "Dropdown",
+    "step_size": "Step Size",
+    "temp_unit": "Temperature Unit",
+    "temp_unit_default": "Use Default (from Home Assistant)",
+    "temp_unit_hidden": "Hidden",
+    "temp_unit_custom": "Custom",
+    "custom_temp_unit": "Custom Temperature Unit",
+    "show_name": "Show Name",
+    "show_sensor_labels": "Show Sensor Labels",
+    "show_hvac_modes": "Show HVAC Modes",
+    "show_preset_modes": "Show Preset Modes",
+    "show_fan_modes": "Show Fan Modes",
+    "show_swing_modes": "Show Swing Modes",
+    "show_related_entities": "Show Related Entities"
   }
 }

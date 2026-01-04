@@ -1,0 +1,38 @@
+{
+  "common": {
+    "version": "Verzió",
+    "invalid_configuration": "Érvénytelen konfiguráció",
+    "invalid_config_entity": "Adj meg egy entitást a climate domainen belül",
+    "show_warning": "Figyelmeztetés megjelenítése",
+    "show_error": "Hiba megjelenítése"
+  },
+  "card": {
+    "name": "Mini Termosztát",
+    "description": "Kompakt termosztát kártya testreszabható módokkal és vezérlőkkel",
+    "name_test": "Mini Termosztát (Teszt)",
+    "description_test": "Teszt verzió debug információkkal és legújabb funkciókkal"
+  },
+  "editor": {
+    "entity": "Entitás",
+    "name": "Név (opcionális)",
+    "layout": "Elrendezés",
+    "layout_row": "Sor",
+    "layout_col": "Oszlop",
+    "display_mode": "Megjelenítési mód",
+    "display_buttons": "Gombok",
+    "display_dropdown": "Legördülő",
+    "step_size": "Lépésköz",
+    "temp_unit": "Hőmérséklet egység",
+    "temp_unit_default": "Alapértelmezett használata (Home Assistant-ból)",
+    "temp_unit_hidden": "Rejtett",
+    "temp_unit_custom": "Egyéni",
+    "custom_temp_unit": "Egyéni hőmérséklet egység",
+    "show_name": "Név megjelenítése",
+    "show_sensor_labels": "Szenzor címkék megjelenítése",
+    "show_hvac_modes": "HVAC módok megjelenítése",
+    "show_preset_modes": "Preset módok megjelenítése",
+    "show_fan_modes": "Ventilátor módok megjelenítése",
+    "show_swing_modes": "Swing módok megjelenítése",
+    "show_related_entities": "Kapcsolódó entitások megjelenítése"
+  }
+}
