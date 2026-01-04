@@ -5,7 +5,7 @@ import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { html } from 'lit-html';
 import { HomeAssistant } from './types';
-import './mini-thermostat-card-editor';
+import './mini-thermostat-card-editor-test';
 
 /* eslint no-console: 0 */
 console.info(
@@ -31,7 +31,7 @@ window.customCards.push({
 @customElement('mini-thermostat-card-test')
 export class MiniThermostatCardTest extends MiniThermostatCardBase {
   public static async getConfigElement() {
-    return document.createElement('mini-thermostat-card-editor');
+    return document.createElement('mini-thermostat-card-editor-test');
   }
 
   public static getStubConfig(hass?: HomeAssistant) {
