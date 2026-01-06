@@ -4,6 +4,10 @@ import { fireEvent } from './ha-frontend/common/dom/fire_event';
 import { HomeAssistant } from './types';
 import { MiniThermostatCardConfig } from './mini-thermostat-card-base';
 import { localize } from './localize/localize';
+import { supportsFeature } from './ha-frontend/common/entity/supports-feature';
+import { computeDomain } from './ha-frontend/common/entity/compute_domain';
+import { ClimateEntityFeature } from './ha-frontend/data/climate';
+import { WaterHeaterEntityFeature } from './ha-frontend/data/water_heater';
 
 export class MiniThermostatCardEditorBase extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -18,6 +22,18 @@ export class MiniThermostatCardEditorBase extends LitElement {
     if (!this.hass || !this._config) {
       return nothing;
     }
+
+    const stateObj = this._config.entity ? this.hass.states[this._config.entity] : undefined;
+    const domain = stateObj ? computeDomain(stateObj.entity_id) : '';
+
+    // Check supported features
+    const supportPresetMode =
+      stateObj && domain === 'climate' && supportsFeature(stateObj, ClimateEntityFeature.PRESET_MODE);
+    const supportFanMode = stateObj && domain === 'climate' && supportsFeature(stateObj, ClimateEntityFeature.FAN_MODE);
+    const supportSwingMode =
+      stateObj && domain === 'climate' && supportsFeature(stateObj, ClimateEntityFeature.SWING_MODE);
+    const supportAwayMode =
+      stateObj && domain === 'water_heater' && supportsFeature(stateObj, WaterHeaterEntityFeature.AWAY_MODE);
 
     return html`
       <div class="card-config">
@@ -123,10 +139,10 @@ export class MiniThermostatCardEditorBase extends LitElement {
           ></ha-switch>
         </ha-formfield>
 
-        <ha-formfield label="${localize('editor.show_hvac_modes')}">
+        <ha-formfield label="${localize('editor.show_modes')}">
           <ha-switch
-            .checked=${this._config.show_hvac_modes !== false}
-            .configValue=${'show_hvac_modes'}
+            .checked=${this._config.show_modes !== false}
+            .configValue=${'show_modes'}
             @change=${this._valueChanged}
           ></ha-switch>
         </ha-formfield>
@@ -135,6 +151,7 @@ export class MiniThermostatCardEditorBase extends LitElement {
           <ha-switch
             .checked=${this._config.show_preset_modes === true}
             .configValue=${'show_preset_modes'}
+            .disabled=${!supportPresetMode}
             @change=${this._valueChanged}
           ></ha-switch>
         </ha-formfield>
@@ -143,6 +160,7 @@ export class MiniThermostatCardEditorBase extends LitElement {
           <ha-switch
             .checked=${this._config.show_fan_modes === true}
             .configValue=${'show_fan_modes'}
+            .disabled=${!supportFanMode}
             @change=${this._valueChanged}
           ></ha-switch>
         </ha-formfield>
@@ -151,6 +169,16 @@ export class MiniThermostatCardEditorBase extends LitElement {
           <ha-switch
             .checked=${this._config.show_swing_modes === true}
             .configValue=${'show_swing_modes'}
+            .disabled=${!supportSwingMode}
+            @change=${this._valueChanged}
+          ></ha-switch>
+        </ha-formfield>
+
+        <ha-formfield label="${localize('editor.show_away_mode')}">
+          <ha-switch
+            .checked=${this._config.show_away_mode === true}
+            .configValue=${'show_away_mode'}
+            .disabled=${!supportAwayMode}
             @change=${this._valueChanged}
           ></ha-switch>
         </ha-formfield>

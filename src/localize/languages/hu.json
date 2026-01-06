@@ -29,10 +29,11 @@
     "custom_temp_unit": "Egyéni hőmérséklet egység",
     "show_name": "Név megjelenítése",
     "show_sensor_labels": "Szenzor címkék megjelenítése",
-    "show_hvac_modes": "HVAC módok megjelenítése",
+    "show_modes": "Vezérlő módok megjelenítése",
     "show_preset_modes": "Preset módok megjelenítése",
     "show_fan_modes": "Ventilátor módok megjelenítése",
     "show_swing_modes": "Swing módok megjelenítése",
+    "show_away_mode": "Távol lévő mód megjelenítése",
     "show_related_entities": "Kapcsolódó entitások megjelenítése"
   }
 }

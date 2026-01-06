@@ -29,10 +29,11 @@
     "custom_temp_unit": "Custom Temperature Unit",
     "show_name": "Show Name",
     "show_sensor_labels": "Show Sensor Labels",
-    "show_hvac_modes": "Show HVAC Modes",
+    "show_modes": "Show Control Modes",
     "show_preset_modes": "Show Preset Modes",
     "show_fan_modes": "Show Fan Modes",
     "show_swing_modes": "Show Swing Modes",
+    "show_away_mode": "Show Away Mode",
     "show_related_entities": "Show Related Entities"
   }
 }
