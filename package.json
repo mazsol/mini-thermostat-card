@@ -1,6 +1,6 @@
 {
   "name": "mini-thermostat-card",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "description": "Lovelace mini-thermostat-card",
   "keywords": [
