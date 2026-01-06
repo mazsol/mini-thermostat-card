@@ -14,7 +14,9 @@ A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. 
 - 📱 **Responsive Layout** - Optimized for mobile, tablet, and desktop
 - 🔧 **Customizable** - Multiple configuration options to match your needs
 - 🌡️ **Temperature Control** - Precise temperature adjustment with custom step size
-- 🔄 **HVAC Modes** - Quick access to all climate modes with visual icons
+- 🔄 **Multi-Domain Support** - Works with both `climate` and `water_heater` entities
+- 🏠 **HVAC & Operation Modes** - Quick access to all modes with visual icons
+- 🚿 **Away Mode** - Control away mode for water heaters
 - 📋 **Display Modes** - Choose between buttons or dropdown layout for mode controls
 - 🎛️ **Mode Controls** - Support for preset, fan, and swing modes
 - 🔗 **Related Entities** - Display and control related devices (switches, fans, etc.)
@@ -23,23 +25,35 @@ A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. 
 
 ## Screenshots
 
-<!-- TODO: Add screenshots -->
 ### Desktop View
-<img src="./assets/mini-thermostat-screenshot-desktop.png" alt="Desktop View" width="495">
+<img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-desktop.png" alt="Desktop View" width="495">
 
 ### With Preset Modes
-<img src="./assets/mini-thermostat-screenshot-preset.png" alt="Preset Modes" width="495">
+<img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-preset.png" alt="Preset Modes" width="495">
 
 ### Dropdown Display Mode
-<img src="./assets/mini-thermostat-screenshot-dropdown.png" alt="Dropdown Mode" width="495">
+<img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-dropdown.png" alt="Dropdown Mode" width="495">
 
 ### Mobile View
-<img src="./assets/mini-thermostat-screenshot-mobile.png" alt="Mobile View" width="495">
+<img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-mobile.png" alt="Mobile View" width="495">
+
+### Water Heater Support
+<img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-water_heater-1.png" alt="Water Heater with Away Mode" width="495">
+
+<img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-water_heater-2.png" alt="Water Heater Operation Modes" width="495">
 
 ### Different Layouts
-| Row Layout | Column Layout |
-|------------|---------------|
-| ![Row](./assets/mini-thermostat-screenshot-row.png) | ![Column](./assets/mini-thermostat-screenshot-col.png) |
+
+<table>
+  <tr>
+    <td><b>Row Layout</b></td>
+    <td><b>Column Layout</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-row.png" alt="Row Layout" width="240"></td>
+    <td><img src="https://raw.githubusercontent.com/mazsol/mini-thermostat-card/main/assets/mini-thermostat-screenshot-col.png" alt="Column Layout" width="240"></td>
+  </tr>
+</table>
 
 ## Installation
 
@@ -112,10 +126,11 @@ step_size: 0.5
 show_name: true
 show_sensor_labels: true
 display_mode: buttons
-show_hvac_modes: true
+show_modes: true
 show_preset_modes: false
 show_fan_modes: false
 show_swing_modes: false
+show_away_mode: false
 show_related_entities: true
 ```
 
@@ -124,7 +139,7 @@ show_related_entities: true
 | Name                    | Type           | Required | Description                                      | Default             |
 | ----------------------- | -------------- | -------- | ------------------------------------------------ | ------------------- |
 | `type`                  | string         | **Yes**  | Must be `custom:mini-thermostat-card`            | -                   |
-| `entity`                | string         | **Yes**  | Climate entity ID                                | -                   |
+| `entity`                | string         | **Yes**  | Entity ID (`climate.*` or `water_heater.*`)      | -                   |
 | `name`                  | string         | No       | Card name (overrides entity friendly name)       | Entity friendly name|
 | `layout`                | string         | No       | Layout orientation: `row` or `col`               | `row`               |
 | `temp_unit`             | boolean/string | No       | Temperature unit to display. Use `false` to hide, or custom string (e.g., `°C`, `°F`) | Home Assistant's unit |
@@ -132,10 +147,11 @@ show_related_entities: true
 | `show_name`             | boolean        | No       | Display card name                                | `true`              |
 | `show_sensor_labels`    | boolean        | No       | Show sensor labels (Current, Target, etc.)       | `true`              |
 | `display_mode`          | string         | No       | Mode display type: `buttons` or `dropdown`       | `buttons`           |
-| `show_hvac_modes`       | boolean        | No       | Show HVAC mode controls                          | `true`              |
+| `show_modes`            | boolean        | No       | Show mode controls (HVAC or operation modes)     | `true`              |
 | `show_preset_modes`     | boolean        | No       | Show preset mode controls                        | `false`             |
 | `show_fan_modes`        | boolean        | No       | Show fan mode controls                           | `false`             |
 | `show_swing_modes`      | boolean        | No       | Show swing mode controls                         | `false`             |
+| `show_away_mode`        | boolean        | No       | Show away mode controls (water heaters only)     | `false`             |
 | `show_related_entities` | boolean        | No       | Display related entities from same device        | `false`             |
 
 ## Usage Examples
@@ -194,7 +210,7 @@ Use dropdown menus instead of buttons for a more compact layout:
 type: custom:mini-thermostat-card
 entity: climate.living_room
 display_mode: dropdown
-show_hvac_modes: true
+show_modes: true
 show_preset_modes: true
 show_fan_modes: true
 show_swing_modes: true
@@ -208,10 +224,22 @@ Show all available mode controls with button layout:
 type: custom:mini-thermostat-card
 entity: climate.bedroom
 display_mode: buttons
-show_hvac_modes: true
+show_modes: true
 show_preset_modes: true
 show_fan_modes: true
 show_swing_modes: true
+```
+
+### Water Heater Control
+
+Control water heater with operation modes and away mode:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: water_heater.kitchen
+show_modes: true
+show_away_mode: true
+step_size: 1
 ```
 
 ## Troubleshooting
@@ -229,6 +257,34 @@ The card uses debouncing (1 second delay) to prevent excessive API calls. Wait a
 ### Related entities not showing
 
 Ensure `show_related_entities: true` is set and that your climate device has related entities (switches, sensors) with the same device_id.
+
+## Migration Guide
+
+### Upgrading from v1.x to v2.0.0
+
+**Breaking Change:** The `show_hvac_modes` configuration option has been renamed to `show_modes` to support both climate and water_heater domains.
+
+**Before (v1.x):**
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+show_hvac_modes: true
+```
+
+**After (v2.0.0):**
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+show_modes: true  # Renamed from show_hvac_modes
+```
+
+**What's new in v2.0.0:**
+- ✅ Water heater domain support (`water_heater.*` entities)
+- ✅ Away mode controls for water heaters
+- ✅ Unified mode display for both HVAC and operation modes
+- ✅ Feature detection disables unsupported options in editor
+
+**Action required:** Update your configuration files to use `show_modes` instead of `show_hvac_modes`.
 
 ## Development
 
