@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.0](///compare/1.2.1...2.0.0) (2026-01-06)
+
+### ⚠ BREAKING CHANGES
+
+* add water_heater domain support
+
+### Features
+
+* add water_heater domain support d692b59
+
 ## [1.2.1](///compare/1.2.0...1.2.1) (2026-01-04)
 
 ## [1.2.0](///compare/1.1.0...1.2.0) (2026-01-04)
