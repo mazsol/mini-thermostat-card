@@ -54,7 +54,7 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     --name-font-size: 1.2rem;
     --st-font-size-sensors: 1rem;
 
-    --mdc-icon-button-size: 36px;
+    --mdc-icon-button-size: 26px;
     --mdc-icon-size: 24px;
   }
   ha-control-select-menu {
@@ -232,8 +232,6 @@ export const MINI_THERMOSTAT_CARD_STYLE = css`
     align-items: flex-start;
   }
   h3.current-value {
-    display: flex;
-    align-items: center;
     margin: 0;
     line-height: 30px;
     font-size: 30px;

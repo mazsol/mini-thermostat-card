@@ -132,6 +132,13 @@ show_fan_modes: false
 show_swing_modes: false
 show_away_mode: false
 show_related_entities: true
+style:
+  font_family: 'Roboto, sans-serif'
+temperature_style:
+  font_size: 32px
+  temp_unit_font_size: 18px
+  font_weight: 500
+  color: '#ff5722'
 ```
 
 ### Configuration Options
@@ -153,6 +160,13 @@ show_related_entities: true
 | `show_swing_modes`      | boolean        | No       | Show swing mode controls                         | `false`             |
 | `show_away_mode`        | boolean        | No       | Show away mode controls (water heaters only)     | `false`             |
 | `show_related_entities` | boolean        | No       | Display related entities from same device        | `false`             |
+| `style`                 | object         | No       | Custom styles for the card                       | -                   |
+| `style.font_family`     | string         | No       | Font family for the entire card                  | Default theme font  |
+| `temperature_style`     | object         | No       | Custom styles for temperature display            | -                   |
+| `temperature_style.font_size` | string   | No       | Font size for temperature value                  | Responsive (24-30px)|
+| `temperature_style.temp_unit_font_size` | string | No | Font size for temperature unit (°C/°F)     | Responsive (16-20px)|
+| `temperature_style.font_weight` | string/number | No | Font weight for temperature display         | 400                 |
+| `temperature_style.color` | string       | No       | Color for temperature display                    | Theme text color    |
 
 ## Usage Examples
 
@@ -240,6 +254,32 @@ entity: water_heater.kitchen
 show_modes: true
 show_away_mode: true
 step_size: 1
+```
+
+### Custom Styling
+
+Customize the appearance with custom fonts and temperature display:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+style:
+  font_family: 'Roboto, sans-serif'
+temperature_style:
+  font_size: 40px
+  temp_unit_font_size: 20px
+  font_weight: bold
+  color: '#ff5722'
+```
+
+Or just customize the temperature display:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.bedroom
+temperature_style:
+  font_size: 36px
+  font_weight: 600
 ```
 
 ## Troubleshooting

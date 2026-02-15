@@ -71,6 +71,15 @@ export interface MiniThermostatCardConfig {
   show_swing_modes?: boolean;
   show_away_mode?: boolean;
   show_related_entities?: boolean;
+  style?: {
+    font_family?: string;
+  };
+  temperature_style?: {
+    font_size?: string;
+    temp_unit_font_size?: string;
+    font_weight?: string | number;
+    color?: string;
+  };
   grid_options?: {
     columns?: number;
     min_columns?: number;
@@ -244,7 +253,7 @@ export class MiniThermostatCardBase extends LitElement {
     ];
 
     return html`
-      <ha-card class="${this.stateObj.state}">
+      <ha-card class="${this.stateObj.state}" style="${this.getStyle()}">
         ${debugInfoHtml}
         <section id="tempControls">
           <div class="sensors">
@@ -255,8 +264,15 @@ export class MiniThermostatCardBase extends LitElement {
               <ha-icon style="display:flex" icon="${iconLT}"></ha-icon>
             </ha-icon-button>
             <div class="current-value">
-              <h3 class="current-value ${this.updatingValues ? 'updating' : ''}">${this.temp}</h3>
-              ${showTempUnit ? html`<span class="temp-unit">${tempUnit}</span>` : ''}
+              <h3
+                class="current-value ${this.updatingValues ? 'updating' : ''}"
+                style="${this.getTemperatureStyle(false)}"
+              >
+                ${this.temp}
+              </h3>
+              ${showTempUnit
+                ? html`<span class="temp-unit" style="${this.getTemperatureStyle(true)}">${tempUnit}</span>`
+                : ''}
             </div>
             <ha-icon-button class="last" @click=${() => this.setTemperature(-this.stepSize)}>
               <ha-icon style="display:flex" icon="${iconRB}"></ha-icon>
@@ -795,6 +811,44 @@ export class MiniThermostatCardBase extends LitElement {
 
     // If true, empty string, or undefined, use hass default
     return this.hass.config?.unit_system?.temperature || '°C';
+  }
+
+  private getStyle(): string {
+    if (!this.config.style) {
+      return '';
+    }
+
+    const style = this.config.style;
+    const styles: string[] = [];
+
+    if (style.font_family) {
+      styles.push(`font-family: ${style.font_family}`);
+    }
+
+    return styles.join('; ');
+  }
+
+  private getTemperatureStyle(isUnitStyle: boolean = false): string {
+    if (!this.config.temperature_style) {
+      return '';
+    }
+
+    const style = this.config.temperature_style;
+    const styles: string[] = [];
+
+    // Font size: use temp_unit_font_size for unit, font_size for value
+    const fontSize = isUnitStyle && style.temp_unit_font_size ? style.temp_unit_font_size : style.font_size;
+    if (fontSize) {
+      styles.push(`font-size: ${fontSize}`);
+    }
+    if (style.font_weight) {
+      styles.push(`font-weight: ${style.font_weight}`);
+    }
+    if (style.color) {
+      styles.push(`color: ${style.color}`);
+    }
+
+    return styles.join('; ');
   }
 
   static get styles(): CSSResultGroup {
