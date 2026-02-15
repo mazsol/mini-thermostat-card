@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.0](///compare/2.0.1...2.1.0) (2026-02-15)
+
+### Features
+
+* add configurable styling for card and temperature display ff30aad
+
 ## [2.0.1](///compare/2.0.0...2.0.1) (2026-01-06)
 
 ## [2.0.0](///compare/1.2.1...2.0.0) (2026-01-06)
