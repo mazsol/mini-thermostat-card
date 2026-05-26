@@ -1,4 +1,6 @@
 import { LitElement, html, css, nothing } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
+import { mdiArrowDown, mdiArrowUp } from '@mdi/js';
 import { property, state } from 'lit/decorators.js';
 import { fireEvent } from './ha-frontend/common/dom/fire_event';
 import { HomeAssistant } from './types';
@@ -156,6 +158,8 @@ export class MiniThermostatCardEditorBase extends LitElement {
           ></ha-switch>
         </ha-formfield>
 
+        ${this._config.show_preset_modes && supportPresetMode ? this._renderPresetModesEditor(stateObj) : nothing}
+
         <ha-formfield label="${localize('editor.show_fan_modes')}">
           <ha-switch
             .checked=${this._config.show_fan_modes === true}
@@ -192,6 +196,88 @@ export class MiniThermostatCardEditorBase extends LitElement {
         </ha-formfield>
       </div>
     `;
+  }
+
+  private _renderPresetModesEditor(stateObj) {
+    const available: string[] = stateObj?.attributes.preset_modes || [];
+    if (!available.length) return nothing;
+
+    const configured: string[] = this._config.preset_modes?.length ? this._config.preset_modes : [];
+    // Visible: configured presets in config order; hidden: remaining available presets
+    const visible = configured.filter((m) => available.includes(m));
+    const hidden = available.filter((m) => !configured.includes(m));
+    const displayList = [...visible, ...hidden];
+
+    return html`
+      <div class="preset-modes-editor">
+        <div class="preset-modes-label">${localize('editor.preset_modes_list')}</div>
+        ${repeat(
+          displayList,
+          (mode) => mode,
+          (mode) => {
+            const isVisible = visible.includes(mode);
+            const visibleIndex = visible.indexOf(mode);
+            return html`
+              <div class="preset-mode-row">
+                <ha-switch
+                  .checked=${isVisible}
+                  @change=${(ev) => this._presetModeToggle(mode, ev.target.checked, available, visible)}
+                ></ha-switch>
+                <span class="preset-mode-name">${mode}</span>
+                <ha-icon-button
+                  .disabled=${!isVisible || visibleIndex === 0}
+                  @click=${() => isVisible && this._presetModeMove(mode, -1, visible)}
+                >
+                  <ha-svg-icon .path=${mdiArrowUp}></ha-svg-icon>
+                </ha-icon-button>
+                <ha-icon-button
+                  .disabled=${!isVisible || visibleIndex === visible.length - 1}
+                  @click=${() => isVisible && this._presetModeMove(mode, 1, visible)}
+                >
+                  <ha-svg-icon .path=${mdiArrowDown}></ha-svg-icon>
+                </ha-icon-button>
+              </div>
+            `;
+          },
+        )}
+      </div>
+    `;
+  }
+
+  private _presetModeToggle(mode: string, checked: boolean, available: string[], visible: string[]): void {
+    let newVisible: string[];
+    if (checked) {
+      newVisible = [...visible, mode];
+    } else {
+      newVisible = visible.filter((m) => m !== mode);
+    }
+
+    const newConfig = { ...this._config };
+    // If all available presets are visible, remove the config key (use default behavior)
+    if (
+      !newVisible.length ||
+      (newVisible.length === available.length && available.every((m) => newVisible.includes(m)))
+    ) {
+      delete newConfig.preset_modes;
+    } else {
+      newConfig.preset_modes = newVisible;
+    }
+
+    this._config = newConfig;
+    fireEvent(this, 'config-changed', { config: newConfig });
+  }
+
+  private _presetModeMove(mode: string, direction: -1 | 1, visible: string[]): void {
+    const index = visible.indexOf(mode);
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= visible.length) return;
+
+    const newVisible = [...visible];
+    [newVisible[index], newVisible[newIndex]] = [newVisible[newIndex], newVisible[index]];
+
+    const newConfig = { ...this._config, preset_modes: newVisible };
+    this._config = newConfig;
+    fireEvent(this, 'config-changed', { config: newConfig });
   }
 
   private _valueChanged(ev): void {
@@ -285,6 +371,28 @@ export class MiniThermostatCardEditorBase extends LitElement {
       display: flex;
       align-items: center;
       padding: 8px 0;
+    }
+    .preset-modes-editor {
+      border: 1px solid var(--divider-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .preset-modes-label {
+      font-size: 0.9em;
+      color: var(--secondary-text-color);
+      padding: 4px 0 8px;
+    }
+    .preset-mode-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 0;
+    }
+    .preset-mode-name {
+      flex: 1;
+    }
+    ha-icon-button[disabled] {
+      opacity: 0.3;
     }
   `;
 }

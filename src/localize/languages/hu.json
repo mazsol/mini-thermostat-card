@@ -31,6 +31,7 @@
     "show_sensor_labels": "Szenzor címkék megjelenítése",
     "show_modes": "Vezérlő módok megjelenítése",
     "show_preset_modes": "Preset módok megjelenítése",
+    "preset_modes_list": "Látható preset módok és sorrendjük",
     "show_fan_modes": "Ventilátor módok megjelenítése",
     "show_swing_modes": "Swing módok megjelenítése",
     "show_away_mode": "Távol lévő mód megjelenítése",

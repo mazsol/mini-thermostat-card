@@ -31,6 +31,7 @@
     "show_sensor_labels": "Show Sensor Labels",
     "show_modes": "Show Control Modes",
     "show_preset_modes": "Show Preset Modes",
+    "preset_modes_list": "Visible preset modes & order",
     "show_fan_modes": "Show Fan Modes",
     "show_swing_modes": "Show Swing Modes",
     "show_away_mode": "Show Away Mode",

@@ -67,6 +67,7 @@ export interface MiniThermostatCardConfig {
   display_mode?: 'buttons' | 'dropdown'; // default: 'buttons'
   show_modes?: boolean;
   show_preset_modes?: boolean;
+  preset_modes?: string[]; // ordered list of preset modes to display; if empty/undefined, all presets are shown
   show_fan_modes?: boolean;
   show_swing_modes?: boolean;
   show_away_mode?: boolean;
@@ -199,6 +200,14 @@ export class MiniThermostatCardBase extends LitElement {
     if (this.domain === 'climate') return climateHvacModeIcon(mode);
     if (this.domain === 'water_heater') return computeOperationModeIcon(mode);
     return nothing;
+  };
+
+  private getFilteredPresetModes = (stateObj): string[] => {
+    const available: string[] = stateObj.attributes.preset_modes || [];
+    const configured: string[] = this.config.preset_modes?.length ? this.config.preset_modes : [];
+    if (!configured.length) return available;
+    // Return only configured presets that are actually available on the entity
+    return configured.filter((mode) => available.includes(mode));
   };
 
   // Render card
@@ -542,7 +551,7 @@ export class MiniThermostatCardBase extends LitElement {
 
     return html`
       <div id="preset-modes">
-        ${stateObj.attributes.preset_modes.map((presetMode) => {
+        ${this.getFilteredPresetModes(stateObj).map((presetMode) => {
           const selected = stateObj.attributes.preset_mode === presetMode;
           const presetModeLabel = this.haLocalize(
             presetMode,
@@ -568,7 +577,7 @@ export class MiniThermostatCardBase extends LitElement {
   private renderPresetModesDropdown({ hide, stateObj }) {
     if (hide || typeof stateObj === 'undefined') return nothing;
 
-    const options = stateObj.attributes.preset_modes!.map((mode) => ({
+    const options = this.getFilteredPresetModes(stateObj).map((mode) => ({
       value: mode,
       label: this.haLocalize(mode, 'component.climate.entity_component._.state_attributes.preset_mode.state.'),
     }));
