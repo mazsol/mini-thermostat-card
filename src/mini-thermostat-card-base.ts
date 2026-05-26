@@ -250,6 +250,20 @@ export class MiniThermostatCardBase extends LitElement {
           heading: this.showLabels ? this.haLocalize('ui.panel.lovelace.editor.card.generic.state') : false,
         },
       }),
+      this.renderSensorItem({
+        hide: this.domain !== 'climate' || !stateObj.attributes.hvac_action,
+        state: stateObj.attributes.hvac_action
+          ? this.haLocalize(
+              stateObj.attributes.hvac_action,
+              'component.climate.entity_component._.state_attributes.hvac_action.state.',
+            )
+          : undefined,
+        details: {
+          heading: this.showLabels
+            ? this.haLocalize('component.climate.entity_component._.state_attributes.hvac_action.name')
+            : false,
+        },
+      }),
     ];
 
     return html`
