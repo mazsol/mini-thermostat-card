@@ -433,7 +433,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [commits-shield]: https://img.shields.io/github/commit-activity/y/mazsol/mini-thermostat-card.svg?style=for-the-badge
 [commits]: https://github.com/mazsol/mini-thermostat-card/commits/main
 [license-shield]: https://img.shields.io/github/license/mazsol/mini-thermostat-card.svg?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2026.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/mazsol/mini-thermostat-card.svg?style=for-the-badge
 [releases]: https://github.com/mazsol/mini-thermostat-card/releases
 
