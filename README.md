@@ -18,7 +18,8 @@ A minimalistic and customizable thermostat card for Home Assistant Lovelace UI. 
 - 🏠 **HVAC & Operation Modes** - Quick access to all modes with visual icons
 - 🚿 **Away Mode** - Control away mode for water heaters
 - 📋 **Display Modes** - Choose between buttons or dropdown layout for mode controls
-- 🎛️ **Mode Controls** - Support for preset, fan, and swing modes
+- 🎛️ **Mode Controls** - Support for preset, fan, and swing modes with configurable visibility and ordering
+- 📊 **HVAC Action** - Displays the current action (heating/cooling/idle) when reported by the device
 - 🔗 **Related Entities** - Display and control related devices (switches, fans, etc.)
 - 🌍 **Localization** - Supports Home Assistant's multi-language system
 - ⚡ **Debounced Updates** - Smart temperature updates to reduce API calls
@@ -127,7 +128,10 @@ show_name: true
 show_sensor_labels: true
 display_mode: buttons
 show_modes: true
-show_preset_modes: false
+show_preset_modes: true
+preset_modes:
+  - eco
+  - comfort
 show_fan_modes: false
 show_swing_modes: false
 show_away_mode: false
@@ -156,6 +160,7 @@ temperature_style:
 | `display_mode`          | string         | No       | Mode display type: `buttons` or `dropdown`       | `buttons`           |
 | `show_modes`            | boolean        | No       | Show mode controls (HVAC or operation modes)     | `true`              |
 | `show_preset_modes`     | boolean        | No       | Show preset mode controls                        | `false`             |
+| `preset_modes`          | list           | No       | Ordered list of preset modes to display; if omitted, all presets are shown | All presets |
 | `show_fan_modes`        | boolean        | No       | Show fan mode controls                           | `false`             |
 | `show_swing_modes`      | boolean        | No       | Show swing mode controls                         | `false`             |
 | `show_away_mode`        | boolean        | No       | Show away mode controls (water heaters only)     | `false`             |
@@ -215,6 +220,22 @@ entity: climate.bathroom
 layout: col
 show_name: false
 ```
+
+### Preset Modes with Custom Visibility and Order
+
+Show only specific presets in a defined order:
+
+```yaml
+type: custom:mini-thermostat-card
+entity: climate.living_room
+show_preset_modes: true
+preset_modes:
+  - comfort
+  - eco
+  - boost
+```
+
+Presets not listed in `preset_modes` are hidden. If `preset_modes` is omitted, all presets are shown in their default order. The order and visibility can also be configured via the visual editor.
 
 ### Dropdown Mode for Compact Display
 
