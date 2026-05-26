@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.2.0](///compare/2.1.0...2.2.0) (2026-05-26)
+
+### Features
+
+* add configurable preset mode visibility and ordering 97d67f8, closes #1
+* display hvac_action attribute when available a8e1ace, closes #2
+
+### Bug Fixes
+
+* update dropdown menus to new ha-control-select-menu API 072f21b
+
 ## [2.1.0](///compare/2.0.1...2.1.0) (2026-02-15)
 
 ### Features
