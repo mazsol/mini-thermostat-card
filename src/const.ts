@@ -1,4 +1,4 @@
-export const CARD_VERSION = '2.2.1';
+export const CARD_VERSION = '2.2.2';
 
 export const UNAVAILABLE = 'unavailable';
 export const UNKNOWN = 'unknown';
